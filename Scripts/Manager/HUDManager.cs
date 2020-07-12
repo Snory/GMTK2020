@@ -10,8 +10,6 @@ public class HUDManager : MonoBehaviour
     [SerializeField]
     TextMeshProUGUI _win, _lose;
 
-    [SerializeField]
-    Image _speedMeter;
 
     private static HUDManager _instance;
     public static HUDManager Instance { get => _instance; }
@@ -30,7 +28,6 @@ public class HUDManager : MonoBehaviour
     void Start()
     {
         _win.enabled = false;
-        _speedMeter.enabled = false;
         LevelManager.Instance.LevelStarted += StartGame;
     }
 
@@ -40,14 +37,10 @@ public class HUDManager : MonoBehaviour
         
     }
 
-    public void SetSpeedMeter(float speedFillAmount)
-    {
-        _speedMeter.fillAmount = speedFillAmount;
-    }
 
     public void StartGame()
     {
-        _speedMeter.enabled = true;
+
     }
 
     public void WinGame()

@@ -1,24 +1,27 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.UI;
 
 public delegate void DestinationReachedDelegate();
 public class Lampion : MonoBehaviour
 {
-
-    public Transform basewire1, basewire2, basketWire1, basketWire2;
+    [SerializeField]
+    private Transform basewire1, basewire2, basketWire1, basketWire2;
     private LineRenderer _lineRendered;
     private Rigidbody2D _body;
 
     [SerializeField]
-    private GameObject _wireLinePrefab, _arrow;
+    private GameObject _wireLinePrefab, _destinationPointer, _directionPointer;
+
+    [SerializeField]
+    private Image _speedMeter;
+
     private GameObject _currentLeftLine;
     private GameObject _currentRightLine;
     private GameObject _destination;
     public event DestinationReachedDelegate DestinationReached;
-
-
     private float _maxSpeed;
 
 
@@ -31,9 +34,11 @@ public class Lampion : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        _destination = GameObject.FindGameObjectWithTag("Destination");
-        _arrow.SetActive(false);
-        _maxSpeed = 100;
+        _destination = GameObject.FindGameObjectWithTag(MyTags.DESTINATION_TAG);
+        _destinationPointer.SetActive(false);
+        _directionPointer.SetActive(false);
+        _speedMeter.enabled = false;
+        _maxSpeed = 15;
         LevelManager.Instance.LevelStarted += OnGameStarted;
         
     }
@@ -41,26 +46,35 @@ public class Lampion : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
         CreateWires();
-        NavigateTo(_destination);
+        UpdateDestinationPointer(_destination);
+        UpdateDirectionPointer();
         UpdateSpeed();
+
+
     }
+
+    
+
+    private void UpdateDirectionPointer()
+    {
+        Vector3 movementDirection = _body.velocity;
+        var angle = Mathf.Atan2(movementDirection.y, movementDirection.x) * Mathf.Rad2Deg;
+        _directionPointer.transform.rotation = Quaternion.RotateTowards(_directionPointer.transform.rotation, Quaternion.AngleAxis(angle, Vector3.forward), 180 * Time.deltaTime);
+    }
+
 
     private void UpdateSpeed()
     {
-        float currentSpeed = _body.velocity.sqrMagnitude;
-        Vector2 currentVelocity = _body.velocity;
-        if(currentSpeed > _maxSpeed)
-        {
-            _body.velocity = currentVelocity.normalized* _maxSpeed;
-        }
-        HUDManager.Instance.SetSpeedMeter(currentSpeed / _maxSpeed);
+        _body.velocity = Vector3.ClampMagnitude(_body.velocity, _maxSpeed);
+        _speedMeter.fillAmount = (_body.velocity.magnitude / _maxSpeed);
 
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.tag == "Destination")
+        if(collision.tag == MyTags.DESTINATION_TAG)
         {
             RaiseReachedDestination();
         }
@@ -93,7 +107,9 @@ public class Lampion : MonoBehaviour
 
     private void OnGameStarted()
     {
-        _arrow.SetActive(true);
+        _destinationPointer.SetActive(true);
+        _directionPointer.SetActive(true);
+        _speedMeter.enabled = true;
     }
 
     private void RaiseReachedDestination()
@@ -104,15 +120,11 @@ public class Lampion : MonoBehaviour
         }
     }
 
-    private void NavigateTo(GameObject navigateTo)
+    private void UpdateDestinationPointer(GameObject navigateTo)
     {
-        Vector3 directionToDestination = navigateTo.transform.position - _arrow.transform.position;
-        var angle = Mathf.Atan2(directionToDestination.y, directionToDestination.x) * Mathf.Rad2Deg;
-
-     
-        _arrow.transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
-
-
+        Vector3 directionToDestination = navigateTo.transform.position - _destinationPointer.transform.position;
+        var angle = Mathf.Atan2(directionToDestination.y, directionToDestination.x) * Mathf.Rad2Deg;     
+        _destinationPointer.transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
     }
 
 

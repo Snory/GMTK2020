@@ -6,19 +6,24 @@ using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 
 public class EventGameState : UnityEvent<GameState, GameState> { };
-public enum GameState { PREGAME, RUNNING, PAUSED, ACTION };
+public enum GameState { PREGAME, RUNNING, PAUSED };
 public class GameManager : MonoBehaviour
 {
     private static GameManager _instance;
     public static GameManager Instance { get => _instance; }
     [SerializeField]
-    private string _currentLevelName = string.Empty;
+    public string _curentLevel = string.Empty;
+
+    [SerializeField]
+    private bool _levelInstance;
 
     [SerializeField]
     public EventGameState GameStateChanged;
 
-    private List<AsyncOperation> _loadOperation;
 
+
+    private GameState _currentGameState = GameState.PREGAME;
+    public GameState CurrentGameState { get { return _currentGameState; } private set { _currentGameState = value; } }
 
     private void Awake()
     {
@@ -27,20 +32,23 @@ public class GameManager : MonoBehaviour
             _instance = this;
             DontDestroyOnLoad(this);
         }
+        else
+        {
+            Destroy(this.gameObject);
+        }
+
     }
-
-    private GameState _currentGameState = GameState.PREGAME;
-
-
-    public GameState CurrentGameState { get { return _currentGameState; } private set { _currentGameState = value; } }
-
+    
 
     private void CheckInput()
     {
 
         if (Input.GetKeyDown(KeyCode.R))
         {
-            LoadLevel(_currentLevelName);
+            string lastLevel = _curentLevel;
+            UnloadLevel(_curentLevel);
+            LoadLevel(lastLevel);
+            GameManager.Instance.UpdateState(GameState.RUNNING);
 
         }
     }
@@ -54,27 +62,28 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         GameStateChanged = new EventGameState();
-        _loadOperation = new List<AsyncOperation>();
-        Init();
+        if (!_levelInstance) { 
+            Init();
+        }
 
     }
 
 
     public void LoadLevel(string levelName)
     {
-        Debug.Log(_currentLevelName);
-        Debug.Log(levelName);
-        if (!String.IsNullOrEmpty(_currentLevelName)) UnloadLevel(_currentLevelName);
-        SceneManager.LoadSceneAsync(levelName, LoadSceneMode.Additive);
-        _currentLevelName = levelName;
+        _curentLevel = levelName;
+        SceneManager.LoadScene(levelName, LoadSceneMode.Additive);
+
 
     }
 
     public void UnloadLevel(string levelName)
     {
+        if (String.IsNullOrEmpty(levelName)) return;
+        PoolManager.Instance.ReturAllFlyingItem();
+        SceneManager.UnloadSceneAsync(levelName);
+        _curentLevel = string.Empty;
 
-         SceneManager.UnloadSceneAsync(levelName);
-        _currentLevelName = String.Empty;
     }
 
 
@@ -106,15 +115,14 @@ public class GameManager : MonoBehaviour
     public void Init()
     {
         LoadLevel("Menu");
+
     }
 
 
     public void StartGame()
     {
-        Debug.Log(_currentLevelName);
-      
-        LoadLevel("Level1");
-        Debug.Log(_currentLevelName);
-        
+        GameManager.Instance.UnloadLevel(GameManager.Instance._curentLevel);
+        GameManager.Instance.LoadLevel("Level1");
+        GameManager.Instance.UpdateState(GameState.RUNNING);
     }
 }

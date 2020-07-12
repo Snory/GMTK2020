@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2cd1687ef0fea584eb2a20de89e33d9c, type: 3}
+  m_Name: Land
+  m_EditorClassIdentifier: 
+  _maxSpeed: 50
+  _texture: {fileID: 5882408185683326576, guid: 2ddd84536b5a6e747aec73cba1429cb8,
+    type: 3}
+  _color: {r: 1, g: 1, b: 1, a: 0}

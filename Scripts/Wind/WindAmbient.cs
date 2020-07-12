@@ -5,50 +5,48 @@ using UnityEngine.UI;
 
 public class WindAmbient : MonoBehaviour
 {
-
+    [Header("Pointer")]
     public Image WindAmbientPointer;
     public GameObject CenterOfPointer;
     public GameObject PeakOfPointer;
+
+    [Header("Bodies")]
     public List<Rigidbody2D> BodiesInWind;
-    public float WindPower;
     private Vector2 _tempMousePositionInWorld = Vector3.zero;
+    
+    [Header("Settings")]
+    public float WindPower;
+    public bool WindOnStart;
+   
+
 
     // Start is called before the first frame update
     void Start()
     {
-        StartCoroutine(RandomWindAngle());
-        StartCoroutine(ApplyWindToBodies());
+        if (WindOnStart)
+        {
+            this.EnableWind();
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-       
 
     }
 
-    private void ManualWindApplication()
+    public void EnableWind()
     {
-        if (Input.GetMouseButtonDown(1))
-        {
-            _tempMousePositionInWorld = Input.mousePosition;
-
-
-        }
-
-        if (Input.GetMouseButtonUp(1))
-        {
-            WindPower = Vector2.Distance(Input.mousePosition, _tempMousePositionInWorld);
-
-
-            Vector2 directionOfWind = (PeakOfPointer.transform.position - CenterOfPointer.transform.position).normalized;
-            foreach (Rigidbody2D body in BodiesInWind)
-            {
-                body.AddForce(directionOfWind * WindPower,ForceMode2D.Impulse);
-            }
-
-        }
+        StartCoroutine(RandomWindAngle());
+        StartCoroutine(ApplyWindToBodies());
     }
+
+
+    public void DisableWind()
+    {
+        StopAllCoroutines();
+    }
+
 
 
     IEnumerator ApplyWindToBodies()
@@ -57,9 +55,13 @@ public class WindAmbient : MonoBehaviour
         foreach (Rigidbody2D body in BodiesInWind)
         {
             body.AddForce(directionOfWind * WindPower);
+           
+
         }
 
+
         yield return new WaitForSeconds(Random.Range(0.5f, 0.8f));
+       
         StartCoroutine(ApplyWindToBodies());
     }
 
@@ -68,6 +70,7 @@ public class WindAmbient : MonoBehaviour
 
     IEnumerator RandomWindAngle()
     {
+
         float _windAmbientAngle = Random.Range(-180, 180);
         Quaternion newRotation = Quaternion.AngleAxis(_windAmbientAngle, Vector3.forward);
 
@@ -81,10 +84,18 @@ public class WindAmbient : MonoBehaviour
                 StartCoroutine(RandomWindAngle());
                 yield break;
             }
-            WindAmbientPointer.transform.rotation = Quaternion.RotateTowards(WindAmbientPointer.transform.rotation, newRotation, 30f * Time.deltaTime);
+            UpdateWindAmbientPointer(newRotation);
             yield return null;
         }
 
 
+    }
+
+    private void UpdateWindAmbientPointer(Quaternion newRotation)
+    {
+        if(WindAmbientPointer != null)
+        {
+            WindAmbientPointer.transform.rotation = Quaternion.RotateTowards(WindAmbientPointer.transform.rotation, newRotation, 30f * Time.deltaTime);
+        }
     }
 }

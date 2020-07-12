@@ -14,28 +14,33 @@ public class LevelManager : MonoBehaviour
     public GameObject WindObject;
     public GameObject LampionObject;
     public GameObject Ground;
+    public GameObject Girl;
     public CinemachineBrain MainCameraBrain;
     public CinemachineVirtualCamera PlayerCam;
     public event LevelStartedDelegate LevelStarted;
     private bool _levelStarted;
+    private bool _gameWon, _gameLost;
+
 
 
     private void Awake()
     {
-        if(_instance == null)
+        if (_instance == null)
         {
             _instance = this;
-          }
+        }
 
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        WindObject = GameObject.FindGameObjectWithTag("Player");
-        LampionObject = GameObject.FindGameObjectWithTag("Lampion");
+        WindObject = GameObject.FindGameObjectWithTag(MyTags.WIND_TAG);
+        LampionObject = GameObject.FindGameObjectWithTag(MyTags.LAMPION_TAG);
+        Girl = GameObject.FindGameObjectWithTag(MyTags.GIRL_TAG);
         LampionObject.GetComponent<Lampion>().DestinationReached += WinGame;
         _levelStarted = false;
+        _gameWon = false;
         SetWind(false);
     }
 
@@ -58,14 +63,15 @@ public class LevelManager : MonoBehaviour
 
         _levelStarted = true;
         SetWind(true);
-        this.Invoke("HideGround", 2f);
         RaiseGameStarted();
+        this.Invoke("HideAfterStart", 4f);
+
 
     }
 
     private void RaiseGameStarted()
     {
-        if(LevelStarted != null)
+        if (LevelStarted != null)
         {
             LevelStarted();
         }
@@ -75,26 +81,44 @@ public class LevelManager : MonoBehaviour
 
     public void WinGame()
     {
-        SetWind(false);
-        HUDManager.Instance.WinGame();
-        GameManager.Instance.UpdateState(GameState.PAUSED);
+        if (!_gameLost)
+        {
+            SetWind(false);
+            HUDManager.Instance.WinGame();
+            GameManager.Instance.UpdateState(GameState.PAUSED);
+            _gameWon = true;
+        }
     }
 
     public void LoseGame()
     {
-        SetWind(false);
-        HUDManager.Instance.LoseGame();
-        GameManager.Instance.UpdateState(GameState.PAUSED);
+        if (!_gameWon)
+        {
+            SetWind(false);
+            HUDManager.Instance.LoseGame();
+            GameManager.Instance.UpdateState(GameState.PAUSED);
+        }
+
     }
 
-    private void HideGround()
+    private void HideAfterStart()
     {
         Ground.SetActive(false);
+        Girl.SetActive(false);
     }
 
     private void SetWind(bool isActive)
     {
-        WindObject.GetComponent<WindAmbient>().WindAmbientPointer.enabled = isActive;
         WindObject.SetActive(isActive);
+        //WindObject.GetComponent<WindAmbient>().WindAmbientPointer.enabled = isActive;
+
+        if (isActive)
+        {
+            WindObject.GetComponent<WindAmbient>().EnableWind();
+        }
+        else
+        {
+            WindObject.GetComponent<WindAmbient>().DisableWind();
+        }
     }
 }
