@@ -82,6 +82,7 @@ public class Lampion : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        Debug.Log($"Collision with {collision.gameObject.name}");
         LevelManager.Instance.LoseGame();
     }
 

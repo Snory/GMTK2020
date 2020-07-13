@@ -97,6 +97,7 @@ public class LevelManager : MonoBehaviour
             SetWind(false);
             HUDManager.Instance.LoseGame();
             GameManager.Instance.UpdateState(GameState.PAUSED);
+            PoolManager.Instance.ReturAllFlyingItem();
         }
 
     }

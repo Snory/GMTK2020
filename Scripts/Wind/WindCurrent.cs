@@ -7,7 +7,7 @@ public class WindCurrent : MonoBehaviour
 {
 
     [Header("WindCUrrentStats")]
-    [Range(0,2)]
+    [Range(0,5)]
     public float CurrentMagnitude;
 
     [Header("WindCurrentObject")]

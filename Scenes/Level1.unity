@@ -201,11 +201,16 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 91ba6f7786aeae84ba0155aae53ad9d5, type: 2}
   - {fileID: 11400000, guid: 671ab7ff4da193444b77554b674dafc7, type: 2}
   FlyingItems: []
-  CloudsPerBurst: 2000
+  CloudsPerBurst: 100
   _leftLevelBorder: {fileID: 7102999520400216118}
   _rightLevelBorder: {fileID: 7102999520400216117}
   _topLevelBorder: {fileID: 7102999520400216116}
   _bottomLevelBorded: {fileID: 7102999520400216115}
+  _minDistanceFromPlayer: 10
+  _maxDistanceFromPlayer: 40
+  _stepDistancePerBurst: 30
+  _burstTime: 50
+  _maxCountOfBurst: 2
 --- !u!50 &75359717 stripped
 Rigidbody2D:
   m_CorrespondingSourceObject: {fileID: 4698736038946425091, guid: c09ec34df021d2d448b1812ce1000c4c,
@@ -1084,7 +1089,7 @@ PrefabInstance:
     - target: {fileID: 4648589864863311110, guid: 1c43c75776de8334699cc37ede2c3281,
         type: 3}
       propertyPath: CurrentMagnitude
-      value: 1.926
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 4648589864863311111, guid: 1c43c75776de8334699cc37ede2c3281,
         type: 3}
@@ -1552,7 +1557,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1705012284}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 23.84459, y: 23.4, z: -10}
+  m_LocalPosition: {x: 23.844446, y: 23.4, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 333453460}
@@ -2349,6 +2354,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: Lampion
       objectReference: {fileID: 0}
+    - target: {fileID: 4698736038946425091, guid: c09ec34df021d2d448b1812ce1000c4c,
+        type: 3}
+      propertyPath: m_BodyType
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4698736038946425091, guid: c09ec34df021d2d448b1812ce1000c4c,
+        type: 3}
+      propertyPath: m_Simulated
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7297567496402830154, guid: c09ec34df021d2d448b1812ce1000c4c,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -2437,6 +2452,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7102999520814176746, guid: 5b39a70057b18174e89227045353ac27,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.164352
+      objectReference: {fileID: 0}
+    - target: {fileID: 7102999520814176746, guid: 5b39a70057b18174e89227045353ac27,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.164352
+      objectReference: {fileID: 0}
+    - target: {fileID: 7102999520814176746, guid: 5b39a70057b18174e89227045353ac27,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.164352
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5b39a70057b18174e89227045353ac27, type: 3}

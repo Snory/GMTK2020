@@ -79,8 +79,7 @@ public class GameManager : MonoBehaviour
 
     public void UnloadLevel(string levelName)
     {
-        if (String.IsNullOrEmpty(levelName)) return;
-        PoolManager.Instance.ReturAllFlyingItem();
+        if (String.IsNullOrEmpty(levelName)) return;        
         SceneManager.UnloadSceneAsync(levelName);
         _curentLevel = string.Empty;
 

@@ -55,11 +55,12 @@ public class PoolManager : MonoBehaviour
         return _flyingItems.Where(f => !f.Spawned).FirstOrDefault();
     }
 
-    private void ReturnFlayingItem(FlyingItem item)
+    public void ReturnFlayingItem(FlyingItem item)
     {
         item.gameObject.SetActive(false);
         item.FlyItemData = null;
         item.Spawned = false;
+        item.transform.parent = this.transform;
     }
 
     public void ReturAllFlyingItem()
@@ -67,7 +68,7 @@ public class PoolManager : MonoBehaviour
 
         foreach(var item in _flyingItems)
         {
-            item.enabled = false;
+            item.gameObject.SetActive(false);
             item.Spawned = false;
             item.FlyItemData = null;
             item.transform.parent = this.transform;

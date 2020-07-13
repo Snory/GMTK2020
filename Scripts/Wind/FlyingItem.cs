@@ -52,14 +52,28 @@ public class FlyingItem : MonoBehaviour
 
     }
 
+    public void Deactive()
+    {
+        PoolManager.Instance.ReturnFlayingItem(this);
+    }
 
     private void UpdateSpeed()
     {
-
-
         Body.velocity = Vector3.ClampMagnitude(Body.velocity, _flyingData.MaxSpeed);
- 
+    }
 
 
+    public IEnumerator ReturnAfterDistanceFrom(Vector3 position, float distance)
+    {
+       
+        bool IsTooFar = Vector2.Distance(this.transform.position, position) > distance;
+        while (!IsTooFar)
+        {
+            IsTooFar = Vector2.Distance(this.transform.position, position) > distance;
+            yield return new WaitForSeconds(3f);
+        }
+
+        Deactive();
+       
     }
 }
